@@ -108,20 +108,28 @@
 
 
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="libaoquan 的博客">
-<meta property="og:url" content="http://libaoquan.net/index.html">
+  <meta name="description" content="本文基于《Spark 最佳实践》第6章 Spark 流式计算。  我们知道网站用户访问流量是不间断的，基于网站的访问日志，即 Web log 分析是典型的流式实时计算应用场景。比如百度统计，它可以做流量分析、来源分析、网站分析、转化分析。另外还有特定场景分析，比如安全分析，用来识别 CC 攻击、 SQL 注入分析、脱库等。这里我们简单实现一个类似于百度分析的系统。  代码见 https://git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark 实践--基于 Spark Streaming 的实时日志分析系统">
+<meta property="og:url" content="http://libaoquan.net/2018/05/20/Spark-实践-基于-Spark-Streaming-的实时日志分析系统/index.html">
 <meta property="og:site_name" content="libaoquan 的博客">
+<meta property="og:description" content="本文基于《Spark 最佳实践》第6章 Spark 流式计算。  我们知道网站用户访问流量是不间断的，基于网站的访问日志，即 Web log 分析是典型的流式实时计算应用场景。比如百度统计，它可以做流量分析、来源分析、网站分析、转化分析。另外还有特定场景分析，比如安全分析，用来识别 CC 攻击、 SQL 注入分析、脱库等。这里我们简单实现一个类似于百度分析的系统。  代码见 https://git">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515210143378-76622861.png">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515210148049-846027.png">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/901252/201805/901252-20180516132626602-903779895.png">
+<meta property="og:updated_time" content="2018-05-20T02:54:47.497Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="libaoquan 的博客">
+<meta name="twitter:title" content="Spark 实践--基于 Spark Streaming 的实时日志分析系统">
+<meta name="twitter:description" content="本文基于《Spark 最佳实践》第6章 Spark 流式计算。  我们知道网站用户访问流量是不间断的，基于网站的访问日志，即 Web log 分析是典型的流式实时计算应用场景。比如百度统计，它可以做流量分析、来源分析、网站分析、转化分析。另外还有特定场景分析，比如安全分析，用来识别 CC 攻击、 SQL 注入分析、脱库等。这里我们简单实现一个类似于百度分析的系统。  代码见 https://git">
+<meta name="twitter:image" content="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515210143378-76622861.png">
 
 
 
 
 
 
-  <link rel="canonical" href="http://libaoquan.net/"/>
+  <link rel="canonical" href="http://libaoquan.net/2018/05/20/Spark-实践-基于-Spark-Streaming-的实时日志分析系统/"/>
 
 
 
@@ -131,7 +139,7 @@
   };
 </script>
 
-  <title>libaoquan 的博客</title>
+  <title>Spark 实践--基于 Spark Streaming 的实时日志分析系统 | libaoquan 的博客</title>
   
 
 
@@ -178,8 +186,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -216,7 +223,7 @@
         
         
           
-          <li class="menu-item menu-item-home menu-item-active">
+          <li class="menu-item menu-item-home">
     <a href="/" rel="section">
       <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
   </li>
@@ -260,9 +267,9 @@
           
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -294,11 +301,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/20/Spark-实践-基于-Spark-Streaming-的实时日志分析系统/" itemprop="url">
-                  Spark 实践--基于 Spark Streaming 的实时日志分析系统
-                </a>
+          <h1 class="post-title" itemprop="name headline">Spark 实践--基于 Spark Streaming 的实时日志分析系统
               
             
           </h1>
@@ -361,9 +364,7 @@
       
 
       
-        
-          
-            <p>本文基于《Spark 最佳实践》第6章 Spark 流式计算。</p>
+        <p>本文基于《Spark 最佳实践》第6章 Spark 流式计算。</p>
 <blockquote>
 <p>我们知道网站用户访问流量是不间断的，基于网站的访问日志，即 Web log 分析是典型的流式实时计算应用场景。比如百度统计，它可以做流量分析、来源分析、网站分析、转化分析。另外还有特定场景分析，比如安全分析，用来识别 CC 攻击、 SQL 注入分析、脱库等。这里我们简单实现一个类似于百度分析的系统。</p>
 </blockquote>
@@ -385,8 +386,6 @@
 <p>执行 WebLogAnalyse.scala, 使用 spark-shell 执行 scala 脚本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ spark-shell --executor-memory 5g --driver-memory 1g --master local  &lt; WebLogAnalyse.scala</span><br></pre></td></tr></table></figure></p>
 <p>效果如下，左边是 WebLogAnalyse.scala，右边是 genLog.sh<br><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180516132626602-903779895.png" alt=""></p>
 
-          
-        
       
     </div>
 
@@ -406,179 +405,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://libaoquan.net/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="libaoquan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="libaoquan 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/" itemprop="url">
-                  在 Ubuntu16.04 中搭建 Spark 单机开发环境 (JDK+Scala+Spark)
-                </a>
-              
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
+              <a href="/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/" rel="next" title="在 Ubuntu16.04 中搭建 Spark 单机开发环境 (JDK+Scala+Spark)">
+                <i class="fa fa-chevron-left"></i> 在 Ubuntu16.04 中搭建 Spark 单机开发环境 (JDK+Scala+Spark)
+              </a>
             
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Veröffentlicht am</span>
-              
-
-              
-                
-              
-
-              <time title="Post created: 2018-05-20 10:52:34 / Updated at: 10:53:24" itemprop="dateCreated datePublished" datetime="2018-05-20T10:52:34+08:00">2018-05-20</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>本文主要讲述如何在Ubuntu 16.04 中搭建 Spark 2.11 单机开发环境，主要分为 3 部分：JDK 安装，Scala 安装和 Spark 安装。</p>
-<ol>
-<li>JDK 1.8：<a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank" rel="noopener">jdk-8u171-linux-x64.tar.gz</a> </li>
-<li>Scala 11.12：<a href="https://www.scala-lang.org/download/2.11.12.html" target="_blank" rel="noopener">Scala 2.11.12</a></li>
-<li>Spark 2.2.1：<a href="https://www.apache.org/dyn/closer.lua/spark/spark-2.2.1/spark-2.2.1-bin-hadoop2.7.tgz" target="_blank" rel="noopener">spark-2.2.1-bin-hadoop2.7.tgz</a></li>
-</ol>
-<p>需要注意的是，Spark 版本与 Scala 版本需要匹配一致。</p>
-<blockquote>
-<p>Note: Starting version 2.0, Spark is built with Scala 2.11 by default. Scala 2.10 users should download the Spark source package and build with Scala 2.10 support.</p>
-</blockquote>
-<h2 id="JDK-安装"><a href="#JDK-安装" class="headerlink" title="JDK 安装"></a>JDK 安装</h2><p>下载 jdk-8u171-linux-x64.tar.gz 后，解压到自己指定目录。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mkdir /usr/local/java</span><br><span class="line">$ sudo tar -zxvf jdk-8u171-linux-x64.tar.gz -C /usr/local/java</span><br></pre></td></tr></table></figure></p>
-<p>配置环境变量,打开 profile 文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo gedit /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>在文件末尾写入，注意 JAVA_HOME 是 JDK 的安装路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/usr/local/java/jdk1.8.0_171 </span><br><span class="line">export JRE_HOME=$&#123;JAVA_HOME&#125;/jre </span><br><span class="line">export CLASSPATH=.:$&#123;JAVA_HOME&#125;/lib:$&#123;JRE_HOME&#125;/lib </span><br><span class="line">export PATH=$&#123;JAVA_HOME&#125;/bin:$&#123;JRE_HOME&#125;/bin:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>保存后退出，运行如下命令，使修改环境变量即可生效:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>检测java是否成功安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ java -version</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515190420442-248379264.png" alt=""></p>
-<h2 id="Scala-安装"><a href="#Scala-安装" class="headerlink" title="Scala 安装"></a>Scala 安装</h2><p>下载 Scala 2.11.12 后，解压到自己指定目录。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mkdir /usr/local/scala</span><br><span class="line">$ sudo tar -zxvf scala-2.11.12.tgz -C /usr/local/scala</span><br></pre></td></tr></table></figure></p>
-<p>配置环境变量,打开 profile 文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo gedit /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>在文件末尾写入，注意 SCALA_HOME 是 Scala 的安装路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export SCALA_HOME=/usr/local/scala/scala-2.11.12 </span><br><span class="line">export PATH=$&#123;SCALA_HOME&#125;/bin:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>保存后退出，运行如下命令，使修改环境变量即可生效:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>检测java是否成功安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ scala  -version</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515190437746-1917133413.png" alt=""></p>
-<h2 id="Spark-安装"><a href="#Spark-安装" class="headerlink" title="Spark 安装"></a>Spark 安装</h2><p>下载 spark-2.2.1-bin-hadoop2.7.tgz 后，解压到自己指定目录。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mkdir /usr/local/spark</span><br><span class="line">$ sudo tar -zxvf spark-2.2.1-bin-hadoop2.7.tgz -C /usr/local/spark</span><br></pre></td></tr></table></figure></p>
-<p>配置环境变量,打开 profile 文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo gedit /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>在文件末尾写入，注意 SPARK_HOME 是 Spark 的安装路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export SPARK_HOME=/usr/local/spark/spark-2.2.1-bin-hadoop2.7</span><br><span class="line">export PATH=$&#123;SPARK_HOME&#125;/bin:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>保存后退出，运行如下命令，使修改环境变量即可生效:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>检测java是否成功安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ spark-shell</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515190513466-649477134.png" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -588,158 +436,19 @@
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://libaoquan.net/2018/05/20/在-IntelliJ-IDEA-中配置-Spark-Java-API-运行环境/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="libaoquan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="libaoquan 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/20/在-IntelliJ-IDEA-中配置-Spark-Java-API-运行环境/" itemprop="url">
-                  在 IntelliJ IDEA 中配置 Spark(Java API) 运行环境
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Veröffentlicht am</span>
-              
-
-              
-                
-              
-
-              <time title="Post created: 2018-05-20 10:42:20 / Updated at: 10:47:11" itemprop="dateCreated datePublished" datetime="2018-05-20T10:42:20+08:00">2018-05-20</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="新建Maven项目"><a href="#新建Maven项目" class="headerlink" title="新建Maven项目"></a>新建Maven项目</h3><p><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180507191637793-1908086574.png" alt=""><br><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180507191704007-212816685.png" alt=""><br><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180507191710085-106764602.png" alt=""><br>初始Maven项目完成后，初始的配置（pom.xml）如下：<br><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180507191815051-1739704477.png" alt=""></p>
-<h3 id="配置Maven"><a href="#配置Maven" class="headerlink" title="配置Maven"></a>配置Maven</h3><p>向项目里新建Spark Core库<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;</span><br><span class="line">         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;</span><br><span class="line">    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;</span><br><span class="line"></span><br><span class="line">    &lt;groupId&gt;net.libaoquan&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;TestSpark&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</span><br><span class="line"></span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt; &lt;!-- Spark dependency --&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.spark&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spark-core_2.11&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;2.2.1&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">    &lt;/dependencies&gt;</span><br><span class="line">&lt;/project&gt;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180507191947561-1282522475.png" alt=""></p>
-<h3 id="新建Java类"><a href="#新建Java类" class="headerlink" title="新建Java类"></a>新建Java类</h3><p>新建Java类，写入Spark(Java API)代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import org.apache.spark.api.java.*;</span><br><span class="line">import org.apache.spark.SparkConf;</span><br><span class="line">import org.apache.spark.api.java.function.Function;</span><br><span class="line"></span><br><span class="line">public class TestSparkJava &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        String logFile = &quot;D:\\ab.txt&quot;;</span><br><span class="line">        SparkConf conf = new SparkConf().setMaster(&quot;local&quot;).setAppName(&quot;TestSpark&quot;);</span><br><span class="line">        JavaSparkContext sc = new JavaSparkContext(conf);</span><br><span class="line"></span><br><span class="line">        JavaRDD&lt;String&gt; logData = sc.textFile(logFile).cache();</span><br><span class="line"></span><br><span class="line">        long numAs = logData.filter(new Function&lt;String, Boolean&gt;() &#123;</span><br><span class="line">            public Boolean call(String s) &#123; return s.contains(&quot;0&quot;); &#125;</span><br><span class="line">        &#125;).count();</span><br><span class="line"></span><br><span class="line">        long numBs = logData.filter(new Function&lt;String, Boolean&gt;() &#123;</span><br><span class="line">            public Boolean call(String s) &#123; return s.contains(&quot;1&quot;); &#125;</span><br><span class="line">        &#125;).count();</span><br><span class="line"></span><br><span class="line">        System.out.println(&quot;Lines with 0: &quot; + numAs + &quot;, lines with 1: &quot; + numBs);</span><br><span class="line"></span><br><span class="line">        sc.stop();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>运行项目，结果如下：<br><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180507192204210-1091638991.png" alt=""></p>
-
-          
-        
+    <div class="post-spread">
       
     </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
   </div>
-  
-  
-  
-  </article>
-
-
-    
-  </section>
-
-  
 
 
           </div>
           
+
+  
+
+
 
         </div>
         
@@ -760,8 +469,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -806,6 +524,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#模拟生成-web-log-记录"><span class="nav-number">1.</span> <span class="nav-text">模拟生成 web log 记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#流式分析"><span class="nav-number">2.</span> <span class="nav-text">流式分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行"><span class="nav-number">3.</span> <span class="nav-text">执行</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -940,6 +674,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
 
   
 
