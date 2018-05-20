@@ -1,1006 +1,242 @@
 <!DOCTYPE html>
-
-
-
-
-
-
-
-
-
-
-
-
+<html lang=>
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
   
-
-
-<html class="theme-next gemini use-motion" lang="">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
-<meta name="theme-color" content="#222">
-
-
-
-
-
-
-
-
-
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
-
-
-  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
-
-
-
-
-
-
-
-
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Gemini',
-    version: '6.3.0',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: false,
-    fastclick: false,
-    lazyload: false,
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
-</script>
-
-
+    <link rel="icon" href="">
   
-
-
-
-
-  <meta property="og:type" content="website">
-<meta property="og:title" content="libaoquan 的博客">
-<meta property="og:url" content="http://libaoquan.net/index.html">
-<meta property="og:site_name" content="libaoquan 的博客">
-<meta property="og:locale" content="default">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="libaoquan 的博客">
-
-
-
-
-
-
-  <link rel="canonical" href="http://libaoquan.net/"/>
-
-
-
-<script type="text/javascript" id="page.configurations">
-  CONFIG.page = {
-    sidebar: "",
-  };
-</script>
-
+    
   <title>libaoquan 的博客</title>
-  
-
-
-
-
-
-
-
-
-
-  <noscript>
-  <style type="text/css">
-    .use-motion .motion-element,
-    .use-motion .brand,
-    .use-motion .menu-item,
-    .sidebar-inner,
-    .use-motion .post-block,
-    .use-motion .pagination,
-    .use-motion .comments,
-    .use-motion .post-header,
-    .use-motion .post-body,
-    .use-motion .collection-title { opacity: initial; }
-
-    .use-motion .logo,
-    .use-motion .site-title,
-    .use-motion .site-subtitle {
-      opacity: initial;
-      top: initial;
-    }
-
-    .use-motion {
-      .logo-line-before i { left: initial; }
-      .logo-line-after i { right: initial; }
-    }
-  </style>
-</noscript>
-
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="default">
-
-  
-  
-    
-  
-
-  <div class="container sidebar-position-left 
-  page-home">
-    <div class="headband"></div>
-
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta ">
-    
-
-    <div class="custom-logo-site-title">
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">libaoquan 的博客</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-    
-  </div>
-
-  <div class="site-nav-toggle">
-    <button aria-label="Toggle navigation bar">
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  
-    <ul id="menu" class="menu">
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>libaoquan 的博客</span>
+    </a>
+    <ul class="right-header">
       
-        
-        
-        
+        <li class="nav-item">
           
-          <li class="menu-item menu-item-home menu-item-active">
-    <a href="/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
-  </li>
-        
-        
-        
+            <a href="/" class="item-link active">首页</a>
           
-          <li class="menu-item menu-item-archives">
-    <a href="/archives/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
-  </li>
-
+        </li>
       
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
       
     </ul>
-  
-
-  
-
-  
-</nav>
-
-
-
-  
-
-
-
-</div>
-    </header>
-
-    
-
-
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-            
-
-          
-          <div id="content" class="content">
-            
-  <section id="posts" class="posts-expand">
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://libaoquan.net/2018/05/20/Spark-实践-基于-Spark-Streaming-的实时日志分析系统/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="libaoquan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="libaoquan 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/20/Spark-实践-基于-Spark-Streaming-的实时日志分析系统/" itemprop="url">
-                  Spark 实践--基于 Spark Streaming 的实时日志分析系统
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Veröffentlicht am</span>
-              
-
-              
-                
-              
-
-              <time title="Post created: 2018-05-20 11:22:14 / Updated at: 11:23:53" itemprop="dateCreated datePublished" datetime="2018-05-20T11:22:14+08:00">2018-05-20</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>本文基于《Spark 最佳实践》第6章 Spark 流式计算。</p>
-<blockquote>
-<p>我们知道网站用户访问流量是不间断的，基于网站的访问日志，即 Web log 分析是典型的流式实时计算应用场景。比如百度统计，它可以做流量分析、来源分析、网站分析、转化分析。另外还有特定场景分析，比如安全分析，用来识别 CC 攻击、 SQL 注入分析、脱库等。这里我们简单实现一个类似于百度分析的系统。</p>
-</blockquote>
-<p>代码见 <a href="https://github.com/libaoquan95/WebLogAnalyse" target="_blank" rel="noopener">https://github.com/libaoquan95/WebLogAnalyse</a></p>
-<h2 id="模拟生成-web-log-记录"><a href="#模拟生成-web-log-记录" class="headerlink" title="模拟生成 web log 记录"></a>模拟生成 web log 记录</h2><p>在日志中，每行代表一条访问记录，典型格式如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">46.156.87.72 - - [2018-05-15 06:00:30] &quot;GET /upload.php HTTP/1.1&quot; 200 0 &quot;http://www.baidu.com/s?wd=spark&quot; &quot;Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)&quot; &quot;-&quot;</span><br></pre></td></tr></table></figure></p>
-<p>分别代表：访问 ip，时间戳，访问页面，响应状态，搜索引擎索引，访问 Agent。</p>
-<p>简单模拟一下数据收集和发送的环节，用一个 Python 脚本随机生成 Nginx 访问日志，为了方便起见，不使用 HDFS，使用单机文件系统。</p>
-<p>首先，新建文件夹用于存放日志文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir Documents/nginx</span><br><span class="line">$ mkdir Documents/nginx/log</span><br><span class="line">$ mkdir Documents/nginx/log/tmp</span><br></pre></td></tr></table></figure></p>
-<p>然后，使用 Python 脚本随机生成 Nginx 访问日志，并为脚本设置执行权限, 代码见 <a href="https://github.com/libaoquan95/WebLogAnalyse/blob/master/sample_web_log.py" target="_blank" rel="noopener">sample_web_log.py</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"></span><br><span class="line">import random</span><br><span class="line">import time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class WebLogGeneration(object):</span><br><span class="line"></span><br><span class="line">    # 类属性，由所有类的对象共享</span><br><span class="line">    site_url_base = &quot;http://www.xxx.com/&quot;</span><br><span class="line"></span><br><span class="line">    # 基本构造函数</span><br><span class="line">    def __init__(self):</span><br><span class="line">        #  前面7条是IE,所以大概浏览器类型70%为IE ，接入类型上，20%为移动设备，分别是7和8条,5% 为空</span><br><span class="line">        self.user_agent_dist = &#123;0.0:&quot;Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)&quot;,</span><br><span class="line">                                0.1:&quot;Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)&quot;,</span><br><span class="line">                                0.2:&quot;Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727)&quot;,</span><br><span class="line">                                0.3:&quot;Mozilla/4.0 (compatible; MSIE6.0; Windows NT 5.0; .NET CLR 1.1.4322)&quot;,</span><br><span class="line">                                0.4:&quot;Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko&quot;,</span><br><span class="line">                                0.5:&quot;Mozilla/5.0 (Windows NT 6.1; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0&quot;,</span><br><span class="line">                                0.6:&quot;Mozilla/4.0 (compatible; MSIE6.0; Windows NT 5.0; .NET CLR 1.1.4322)&quot;,</span><br><span class="line">                                0.7:&quot;Mozilla/5.0 (iPhone; CPU iPhone OS 7_0_3 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11B511 Safari/9537.53&quot;,</span><br><span class="line">                                0.8:&quot;Mozilla/5.0 (Linux; Android 4.2.1; Galaxy Nexus Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19&quot;,</span><br><span class="line">                                0.9:&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36&quot;,</span><br><span class="line">                                1:&quot; &quot;,&#125;</span><br><span class="line">        self.ip_slice_list = [10, 29, 30, 46, 55, 63, 72, 87, 98,132,156,124,167,143,187,168,190,201,202,214,215,222]</span><br><span class="line">        self.url_path_list = [&quot;login.php&quot;,&quot;view.php&quot;,&quot;list.php&quot;,&quot;upload.php&quot;,&quot;admin/login.php&quot;,&quot;edit.php&quot;,&quot;index.html&quot;]</span><br><span class="line">        self.http_refer = [ &quot;http://www.baidu.com/s?wd=&#123;query&#125;&quot;,&quot;http://www.google.cn/search?q=&#123;query&#125;&quot;,&quot;http://www.sogou.com/web?query=&#123;query&#125;&quot;,&quot;http://one.cn.yahoo.com/s?p=&#123;query&#125;&quot;,&quot;http://cn.bing.com/search?q=&#123;query&#125;&quot;]</span><br><span class="line">        self.search_keyword = [&quot;spark&quot;,&quot;hadoop&quot;,&quot;hive&quot;,&quot;spark mlib&quot;,&quot;spark sql&quot;]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    def sample_ip(self):</span><br><span class="line">        slice = random.sample(self.ip_slice_list, 4) #从ip_slice_list中随机获取4个元素，作为一个片断返回</span><br><span class="line">        return  &quot;.&quot;.join([str(item) for item in slice])  #  todo</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    def sample_url(self):</span><br><span class="line">        return  random.sample(self.url_path_list,1)[0]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    def sample_user_agent(self):</span><br><span class="line">        dist_uppon = random.uniform(0, 1)</span><br><span class="line">        return self.user_agent_dist[float(&apos;%0.1f&apos; % dist_uppon)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    # 主要搜索引擎referrer参数</span><br><span class="line">    def sample_refer(self):</span><br><span class="line">        if random.uniform(0, 1) &gt; 0.2:  # 只有20% 流量有refer</span><br><span class="line">            return &quot;-&quot;</span><br><span class="line"></span><br><span class="line">        refer_str=random.sample(self.http_refer,1)</span><br><span class="line">        query_str=random.sample(self.search_keyword,1)</span><br><span class="line">        return refer_str[0].format(query=query_str[0])</span><br><span class="line"></span><br><span class="line">    def sample_one_log(self,count = 3):</span><br><span class="line">        time_str = time.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;,time.localtime())</span><br><span class="line">        while count &gt;1:</span><br><span class="line">            query_log = &quot;&#123;ip&#125; - - [&#123;local_time&#125;] \&quot;GET /&#123;url&#125; HTTP/1.1\&quot; 200 0 \&quot;&#123;refer&#125;\&quot; \&quot;&#123;user_agent&#125;\&quot; \&quot;-\&quot;&quot;.format(ip=self.sample_ip(),local_time=time_str,url=self.sample_url(),refer=self.sample_refer(),user_agent=self.sample_user_agent())</span><br><span class="line">            print query_log</span><br><span class="line">            count = count -1</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    web_log_gene = WebLogGeneration()</span><br><span class="line"></span><br><span class="line">    #while True:</span><br><span class="line">    #    time.sleep(random.uniform(0, 3))</span><br><span class="line">    web_log_gene.sample_one_log(random.uniform(10, 100))</span><br></pre></td></tr></table></figure></p>
-<p>设置可执行权限的方法如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ chmod +x sample_web_log.py</span><br></pre></td></tr></table></figure></p>
-<p>之后，编写 bash 脚本，自动生成日志记录，并赋予可执行权限，代码见 <a href="https://github.com/libaoquan95/WebLogAnalyse/blob/master/genLog.sh" target="_blank" rel="noopener">genLog.sh</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line"></span><br><span class="line">while [ 1 ]; do</span><br><span class="line">    ./sample_web_log.py &gt; test.log</span><br><span class="line"></span><br><span class="line">    tmplog=&quot;access.`date +&apos;%s&apos;`.log&quot;</span><br><span class="line">    cp test.log streaming/tmp/$tmplog</span><br><span class="line">    mv streaming/tmp/$tmplog streaming/</span><br><span class="line">    echo &quot;`date +&quot;%F %T&quot;` generating $tmplog succeed&quot;</span><br><span class="line">    sleep 1</span><br><span class="line">done</span><br></pre></td></tr></table></figure></p>
-<p>赋予权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ chmod +x genLog.sh</span><br></pre></td></tr></table></figure></p>
-<p>执行 genLog.sh 查看效果，输入 ctrl+c 终止。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./genLog.sh</span><br></pre></td></tr></table></figure></p>
-<p><img src="/2018/05/20/Spark-实践-基于-Spark-Streaming-的实时日志分析系统/1.png" alt=""></p>
-<p><img src="/2018/05/20/Spark-实践-基于-Spark-Streaming-的实时日志分析系统/2.png" alt=""></p>
-<h2 id="流式分析"><a href="#流式分析" class="headerlink" title="流式分析"></a>流式分析</h2><p>创建 Scala 脚本，代码见 <a href="https://github.com/libaoquan95/WebLogAnalyse/blob/master/WebLogAnalyse.scala" target="_blank" rel="noopener">genLog.sh</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">import org.apache.spark.SparkConf</span><br><span class="line">import org.apache.spark.streaming.&#123;Seconds, StreamingContext&#125;</span><br><span class="line"></span><br><span class="line">val batch = 10  // 计算周期（秒）</span><br><span class="line">//val conf = new SparkConf().setAppName(&quot;WebLogAnalyse&quot;).setMaster(&quot;local&quot;)</span><br><span class="line">//val ssc = new StreamingContext(conf, Seconds(batch))</span><br><span class="line">val ssc = new StreamingContext(sc, Seconds(batch))</span><br><span class="line">val input = &quot;file:///home/libaoquan/Documents/nginx/log&quot;  // 文件流</span><br><span class="line">val lines = ssc.textFileStream(input)</span><br><span class="line"></span><br><span class="line">// 计算总PV</span><br><span class="line">lines.count().print()</span><br><span class="line"></span><br><span class="line">// 各个ip的pv</span><br><span class="line">lines.map(line =&gt; (line.split(&quot; &quot;)(0), 1)).reduceByKey(_+_).print()</span><br><span class="line"></span><br><span class="line">// 获取搜索引擎信息</span><br><span class="line">val urls = lines.map(_.split(&quot;\&quot;&quot;)(3))</span><br><span class="line"></span><br><span class="line">// 先输出搜索引擎和查询关键词，避免统计搜索关键词时重复计算</span><br><span class="line">// 输出(host, query_keys)</span><br><span class="line">val searchEnginInfo = urls.map( url  =&gt; &#123;</span><br><span class="line">  // 搜索引擎对应的关键字索引</span><br><span class="line">  val searchEngines = Map(</span><br><span class="line">  &quot;www.google.cn&quot; -&gt; &quot;q&quot;,</span><br><span class="line">  &quot;www.yahoo.com&quot; -&gt; &quot;p&quot;,</span><br><span class="line">  &quot;cn.bing.com&quot; -&gt; &quot;q&quot;,</span><br><span class="line">  &quot;www.baidu.com&quot; -&gt; &quot;wd&quot;,</span><br><span class="line">  &quot;www.sogou.com&quot; -&gt; &quot;query&quot;</span><br><span class="line">  )</span><br><span class="line">  val temp = url.split(&quot;/&quot;)</span><br><span class="line">  // Array(http:, &quot;&quot;, www.baidu.com, s?wd=hadoop)</span><br><span class="line">  if(temp.length &gt; 2)&#123;</span><br><span class="line">  val host = temp(2)</span><br><span class="line">  if(searchEngines.contains(host))&#123;</span><br><span class="line">    val q = url.split(&quot;//?&quot;)</span><br><span class="line">    if(q.length &gt; 0) &#123;</span><br><span class="line">      val query = q(1)</span><br><span class="line">      val arr_search_q = query.split(&apos;&amp;&apos;).filter(_.indexOf(searchEngines(host) + &quot;=&quot;) == 0)</span><br><span class="line">      if (arr_search_q.length &gt; 0) &#123;</span><br><span class="line">        (host, arr_search_q(0).split(&apos;=&apos;)(1))</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        (host, &quot;&quot;)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; else&#123;</span><br><span class="line">      (&quot;&quot;, &quot;&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; else&#123;</span><br><span class="line">    (&quot;&quot;, &quot;&quot;)</span><br><span class="line">  &#125;</span><br><span class="line">  &#125; else&#123;</span><br><span class="line">  (&quot;&quot;, &quot;&quot;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 搜索引擎pv</span><br><span class="line">searchEnginInfo.filter(_._1.length &gt; 0).map(i =&gt; (i._1, 1)).reduceByKey(_+_).print()</span><br><span class="line"></span><br><span class="line">// 关键字pv</span><br><span class="line">searchEnginInfo.filter(_._2.length &gt; 0).map(i =&gt; (i._2, 1)).reduceByKey(_+_).print()</span><br><span class="line"></span><br><span class="line">// 终端pv</span><br><span class="line">lines.map(_.split(&quot;\&quot;&quot;)(5)).map(agent =&gt; &#123;</span><br><span class="line">  val types = Seq(&quot;iPhone&quot;, &quot;Android&quot;)</span><br><span class="line">  var r = &quot;Default&quot;</span><br><span class="line">  for (t &lt;- types) &#123;</span><br><span class="line">  if (agent.indexOf(t) != -1)</span><br><span class="line">    r = t</span><br><span class="line">  &#125;</span><br><span class="line">  (r, 1)</span><br><span class="line">&#125;).reduceByKey(_ + _).print()</span><br><span class="line"></span><br><span class="line">// 各页面pv</span><br><span class="line">lines.map(line =&gt; (line.split(&quot;\&quot;&quot;)(1).split(&quot; &quot;)(1), 1)).reduceByKey(_+_).print()</span><br><span class="line"></span><br><span class="line">ssc.start()</span><br><span class="line">ssc.awaitTermination()</span><br></pre></td></tr></table></figure></p>
-<h2 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h2><p>同时开启两个终端，分别执行 genLog.sh 生成日志文件和执行 WebLogAnalyse.scala 脚本进行流式分析。</p>
-<p>执行 genLog.sh<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./genLog.sh</span><br></pre></td></tr></table></figure></p>
-<p>执行 WebLogAnalyse.scala, 使用 spark-shell 执行 scala 脚本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ spark-shell --executor-memory 5g --driver-memory 1g --master local  &lt; WebLogAnalyse.scala</span><br></pre></td></tr></table></figure></p>
-<p>效果如下，左边是 WebLogAnalyse.scala，右边是 genLog.sh<br><img src="/2018/05/20/Spark-实践-基于-Spark-Streaming-的实时日志分析系统/3.png" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
   </div>
-  
-  
-  
-  </article>
+</header>
 
-
+  <main id='index'>
+  <div class="posts-list">
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://libaoquan.net/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="libaoquan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="libaoquan 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
+      <section>
+        <a href="/2018/05/20/Spark-实践-基于-Spark-Streaming-的实时日志分析系统/">
+          <h3 class='post-head'>
+            Spark 实践--基于 Spark Streaming 的实时日志分析系统
+          </h3>
+        </a>
         
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/" itemprop="url">
-                  在 Ubuntu16.04 中搭建 Spark 单机开发环境 (JDK+Scala+Spark)
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Veröffentlicht am</span>
-              
-
-              
-                
-              
-
-              <time title="Post created: 2018-05-20 11:17:14 / Updated at: 11:19:35" itemprop="dateCreated datePublished" datetime="2018-05-20T11:17:14+08:00">2018-05-20</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
+        <div class="post-content">
           
-
+            本文基于《Spark 最佳实践》第6章 Spark 流式计算,我们知道网站用户访问流量是不间断的，基于网站的访问日志，即 Web log 分析是典型的流式实时计算应用场景。比如百度统计，它可以做流量分析、来源分析、网站分析、转化分析。另外还有特定场景分析，比如安全分析，用来识别 CC 攻击、 SQL 注入分析、脱库等。这里我们简单实现一个类似于百度分析的系统。
           
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
+        <div class='post-meta'>
+          <i class="fa fa-calendar" aria-hidden="true"></i> <time>2018/05/20</time>
           
-            <h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>本文主要讲述如何在Ubuntu 16.04 中搭建 Spark 2.11 单机开发环境，主要分为 3 部分：JDK 安装，Scala 安装和 Spark 安装。</p>
-<ol>
-<li>JDK 1.8：<a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank" rel="noopener">jdk-8u171-linux-x64.tar.gz</a> </li>
-<li>Scala 11.12：<a href="https://www.scala-lang.org/download/2.11.12.html" target="_blank" rel="noopener">Scala 2.11.12</a></li>
-<li>Spark 2.2.1：<a href="https://www.apache.org/dyn/closer.lua/spark/spark-2.2.1/spark-2.2.1-bin-hadoop2.7.tgz" target="_blank" rel="noopener">spark-2.2.1-bin-hadoop2.7.tgz</a></li>
-</ol>
-<p>需要注意的是，Spark 版本与 Scala 版本需要匹配一致。</p>
-<blockquote>
-<p>Note: Starting version 2.0, Spark is built with Scala 2.11 by default. Scala 2.10 users should download the Spark source package and build with Scala 2.10 support.</p>
-</blockquote>
-<h2 id="JDK-安装"><a href="#JDK-安装" class="headerlink" title="JDK 安装"></a>JDK 安装</h2><p>下载 jdk-8u171-linux-x64.tar.gz 后，解压到自己指定目录。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mkdir /usr/local/java</span><br><span class="line">$ sudo tar -zxvf jdk-8u171-linux-x64.tar.gz -C /usr/local/java</span><br></pre></td></tr></table></figure></p>
-<p>配置环境变量,打开 profile 文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo gedit /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>在文件末尾写入，注意 JAVA_HOME 是 JDK 的安装路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/usr/local/java/jdk1.8.0_171 </span><br><span class="line">export JRE_HOME=$&#123;JAVA_HOME&#125;/jre </span><br><span class="line">export CLASSPATH=.:$&#123;JAVA_HOME&#125;/lib:$&#123;JRE_HOME&#125;/lib </span><br><span class="line">export PATH=$&#123;JAVA_HOME&#125;/bin:$&#123;JRE_HOME&#125;/bin:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>保存后退出，运行如下命令，使修改环境变量即可生效:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>检测java是否成功安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ java -version</span><br></pre></td></tr></table></figure></p>
-<p><img src="/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/1.png" alt=""></p>
-<h2 id="Scala-安装"><a href="#Scala-安装" class="headerlink" title="Scala 安装"></a>Scala 安装</h2><p>下载 Scala 2.11.12 后，解压到自己指定目录。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mkdir /usr/local/scala</span><br><span class="line">$ sudo tar -zxvf scala-2.11.12.tgz -C /usr/local/scala</span><br></pre></td></tr></table></figure></p>
-<p>配置环境变量,打开 profile 文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo gedit /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>在文件末尾写入，注意 SCALA_HOME 是 Scala 的安装路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export SCALA_HOME=/usr/local/scala/scala-2.11.12 </span><br><span class="line">export PATH=$&#123;SCALA_HOME&#125;/bin:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>保存后退出，运行如下命令，使修改环境变量即可生效:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>检测java是否成功安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ scala  -version</span><br></pre></td></tr></table></figure></p>
-<p><img src="/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/2.png" alt=""></p>
-<h2 id="Spark-安装"><a href="#Spark-安装" class="headerlink" title="Spark 安装"></a>Spark 安装</h2><p>下载 spark-2.2.1-bin-hadoop2.7.tgz 后，解压到自己指定目录。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mkdir /usr/local/spark</span><br><span class="line">$ sudo tar -zxvf spark-2.2.1-bin-hadoop2.7.tgz -C /usr/local/spark</span><br></pre></td></tr></table></figure></p>
-<p>配置环境变量,打开 profile 文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo gedit /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>在文件末尾写入，注意 SPARK_HOME 是 Spark 的安装路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export SPARK_HOME=/usr/local/spark/spark-2.2.1-bin-hadoop2.7</span><br><span class="line">export PATH=$&#123;SPARK_HOME&#125;/bin:$PATH</span><br></pre></td></tr></table></figure></p>
-<p>保存后退出，运行如下命令，使修改环境变量即可生效:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source /etc/profile</span><br></pre></td></tr></table></figure></p>
-<p>检测java是否成功安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ spark-shell</span><br></pre></td></tr></table></figure></p>
-<p><img src="/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/3.png" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://libaoquan.net/2018/05/20/在-IntelliJ-IDEA-中配置-Spark-Java-API-运行环境/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="libaoquan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="libaoquan 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/20/在-IntelliJ-IDEA-中配置-Spark-Java-API-运行环境/" itemprop="url">
-                  在 IntelliJ IDEA 中配置 Spark(Java API) 运行环境
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Veröffentlicht am</span>
-              
-
-              
-                
-              
-
-              <time title="Post created: 2018-05-20 11:08:08 / Updated at: 11:13:07" itemprop="dateCreated datePublished" datetime="2018-05-20T11:08:08+08:00">2018-05-20</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="新建Maven项目"><a href="#新建Maven项目" class="headerlink" title="新建Maven项目"></a>新建Maven项目</h3><p><img src="/2018/05/20/在-IntelliJ-IDEA-中配置-Spark-Java-API-运行环境/1.png" alt=""><br><img src="/2018/05/20/在-IntelliJ-IDEA-中配置-Spark-Java-API-运行环境/2.png" alt=""><br><img src="/2018/05/20/在-IntelliJ-IDEA-中配置-Spark-Java-API-运行环境/3.png" alt=""><br>初始Maven项目完成后，初始的配置（pom.xml）如下：<br><img src="/2018/05/20/在-IntelliJ-IDEA-中配置-Spark-Java-API-运行环境/4.png" alt=""></p>
-<h3 id="配置Maven"><a href="#配置Maven" class="headerlink" title="配置Maven"></a>配置Maven</h3><p>向项目里新建Spark Core库<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;</span><br><span class="line">         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;</span><br><span class="line">    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;</span><br><span class="line"></span><br><span class="line">    &lt;groupId&gt;net.libaoquan&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;TestSpark&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</span><br><span class="line"></span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt; &lt;!-- Spark dependency --&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.spark&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spark-core_2.11&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;2.2.1&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">    &lt;/dependencies&gt;</span><br><span class="line">&lt;/project&gt;</span><br></pre></td></tr></table></figure></p>
-<p><img src="/2018/05/20/在-IntelliJ-IDEA-中配置-Spark-Java-API-运行环境/5.png" alt=""></p>
-<h3 id="新建Java类"><a href="#新建Java类" class="headerlink" title="新建Java类"></a>新建Java类</h3><p>新建Java类，写入Spark(Java API)代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import org.apache.spark.api.java.*;</span><br><span class="line">import org.apache.spark.SparkConf;</span><br><span class="line">import org.apache.spark.api.java.function.Function;</span><br><span class="line"></span><br><span class="line">public class TestSparkJava &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        String logFile = &quot;D:\\ab.txt&quot;;</span><br><span class="line">        SparkConf conf = new SparkConf().setMaster(&quot;local&quot;).setAppName(&quot;TestSpark&quot;);</span><br><span class="line">        JavaSparkContext sc = new JavaSparkContext(conf);</span><br><span class="line"></span><br><span class="line">        JavaRDD&lt;String&gt; logData = sc.textFile(logFile).cache();</span><br><span class="line"></span><br><span class="line">        long numAs = logData.filter(new Function&lt;String, Boolean&gt;() &#123;</span><br><span class="line">            public Boolean call(String s) &#123; return s.contains(&quot;0&quot;); &#125;</span><br><span class="line">        &#125;).count();</span><br><span class="line"></span><br><span class="line">        long numBs = logData.filter(new Function&lt;String, Boolean&gt;() &#123;</span><br><span class="line">            public Boolean call(String s) &#123; return s.contains(&quot;1&quot;); &#125;</span><br><span class="line">        &#125;).count();</span><br><span class="line"></span><br><span class="line">        System.out.println(&quot;Lines with 0: &quot; + numAs + &quot;, lines with 1: &quot; + numBs);</span><br><span class="line"></span><br><span class="line">        sc.stop();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>运行项目，结果如下：<br><img src="/2018/05/20/在-IntelliJ-IDEA-中配置-Spark-Java-API-运行环境/6.png" alt=""></p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-  </section>
-
-  
-
-
-          </div>
-          
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
+            | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spark实践/">Spark实践</a>
   </div>
 
-  <aside id="sidebar" class="sidebar">
-    
-    <div class="sidebar-inner">
 
-      
-
-      
-
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
-        <div class="site-overview">
-          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-            
-              <p class="site-author-name" itemprop="name">libaoquan</p>
-              <p class="site-description motion-element" itemprop="description"></p>
-          </div>
 
           
-            <nav class="site-state motion-element">
+          
+            <span class="seperator">|</span>
+             
+                <i class="fa fa-tags" aria-hidden="true"></i>
               
-                <div class="site-state-item site-state-posts">
-                
-                  <a href="/archives/">
-                
-                    <span class="site-state-item-count">3</span>
-                    <span class="site-state-item-name">Artikel</span>
-                  </a>
-                </div>
-              
+             
+  <a href="/tags/#Spark Streaming" class='tag'>Spark Streaming</a>
 
-              
+  <a href="/tags/#Python" class='tag'>Python</a>
 
-              
-            </nav>
-          
+  <a href="/tags/#Scala" class='tag'>Scala</a>
+
 
           
-
-          
-
-          
-          
-
-          
-          
-
-          
-            
-          
-          
-
         </div>
       </section>
-
-      
-
-      
-
-    </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
-  <span class="with-love" id="animate">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">libaoquan</span>
-
-  
-
-  
-</div>
-
-
-
-
-  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
-
-
-
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.3.0</div>
-
-
-
-
-        
-
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-
     
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
+      <section>
+        <a href="/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/">
+          <h3 class='post-head'>
+            在 Ubuntu16.04 中搭建 Spark 单机开发环境 (JDK+Scala+Spark)
+          </h3>
+        </a>
         
-      </div>
-    
-
-    
-
+        <div class="post-content">
+          
+            本文主要讲述如何在Ubuntu 16.04 中搭建 Spark 2.11 单机开发环境，主要分为 3 部分：JDK 安装，Scala 安装和 Spark 安装。
+          
+        </div>
+        <div class='post-meta'>
+          <i class="fa fa-calendar" aria-hidden="true"></i> <time>2018/05/20</time>
+          
+            | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spark实践/">Spark实践</a>
   </div>
 
-  
 
-<script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
 
+          
+          
+            <span class="seperator">|</span>
+             
+                <i class="fa fa-tags" aria-hidden="true"></i>
+              
+             
+  <a href="/tags/#Scala" class='tag'>Scala</a>
+
+  <a href="/tags/#Ubuntu" class='tag'>Ubuntu</a>
+
+  <a href="/tags/#JDK" class='tag'>JDK</a>
+
+
+          
+        </div>
+      </section>
+    
+      <section>
+        <a href="/2018/05/20/在-IntelliJ-IDEA-中配置-Spark-Java-API-运行环境/">
+          <h3 class='post-head'>
+            在 IntelliJ IDEA 中配置 Spark(Java API) 运行环境
+          </h3>
+        </a>
+        
+        <div class="post-content">
+          
+            本文主要讲述如何在 IntelliJ IDEA 中配置 Spark(Java API) 运行环境。
+          
+        </div>
+        <div class='post-meta'>
+          <i class="fa fa-calendar" aria-hidden="true"></i> <time>2018/05/20</time>
+          
+            | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spark实践/">Spark实践</a>
+  </div>
+
+
+
+          
+          
+            <span class="seperator">|</span>
+             
+                <i class="fa fa-tags" aria-hidden="true"></i>
+              
+             
+  <a href="/tags/#IntelliJ IDEA" class='tag'>IntelliJ IDEA</a>
+
+  <a href="/tags/#Java" class='tag'>Java</a>
+
+
+          
+        </div>
+      </section>
+    
+  </div>
+  <aside>
+    
+    <div class="search">
+      <div class="content">
+        <form action="//www.google.com/search" target="_blank" class="search-form">
+          <input type="text" name="q" maxlength="20" placeholder=Search>
+          <input type="hidden" name='sitesearch' value="http://libaoquan.net">
+        </form>
+      </div>
+    </div>
+    
+    
+      <div class="avatar">
+        <img src="http://olnzpdi2u.bkt.clouddn.com/avatar.jpg" alt="avatar">
+          
+            <div class="content">
+                <span>aside-description</span>
+            </div>
+          
+      </div>
+    
+    
+      <div class="categories">
+        <h1>
+          Categories
+        </h1>
+        <div class="content">
+          <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Spark实践/">Spark实践</a></li></ul>
+        </div>
+      </div>
+    
+    
+      <div class="links">
+        <h1>
+          Blogroll
+        </h1>
+        <div class="content">
+          
+            <a href="https://www.baidu.com/" target="_blank">百度</a>
+          
+            <a href="https://www.google.com/" target="_blank">谷歌</a>
+          
+            <a href="https://www.zhihu.com/" target="_blank">知乎</a>
+          
+        </div>
+      </div>
+    
+  </aside>
+</main>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2018 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-  
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
-
-
-
-  
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
-
-
-
-  
-
-
-
-	
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
 </body>
 </html>
