@@ -115,14 +115,14 @@
 <meta property="og:site_name" content="libaoquan 的博客">
 <meta property="og:description" content="准备本文主要讲述如何在Ubuntu 16.04 中搭建 Spark 2.11 单机开发环境，主要分为 3 部分：JDK 安装，Scala 安装和 Spark 安装。  JDK 1.8：jdk-8u171-linux-x64.tar.gz  Scala 11.12：Scala 2.11.12 Spark 2.2.1：spark-2.2.1-bin-hadoop2.7.tgz  需要注意的是，Spar">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515190420442-248379264.png">
-<meta property="og:image" content="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515190437746-1917133413.png">
-<meta property="og:image" content="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515190513466-649477134.png">
-<meta property="og:updated_time" content="2018-05-20T02:53:24.859Z">
+<meta property="og:image" content="http://libaoquan.net/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/1.png">
+<meta property="og:image" content="http://libaoquan.net/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/2.png">
+<meta property="og:image" content="http://libaoquan.net/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/3.png">
+<meta property="og:updated_time" content="2018-05-20T03:19:35.161Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="在 Ubuntu16.04 中搭建 Spark 单机开发环境 (JDK+Scala+Spark)">
 <meta name="twitter:description" content="准备本文主要讲述如何在Ubuntu 16.04 中搭建 Spark 2.11 单机开发环境，主要分为 3 部分：JDK 安装，Scala 安装和 Spark 安装。  JDK 1.8：jdk-8u171-linux-x64.tar.gz  Scala 11.12：Scala 2.11.12 Spark 2.2.1：spark-2.2.1-bin-hadoop2.7.tgz  需要注意的是，Spar">
-<meta name="twitter:image" content="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515190420442-248379264.png">
+<meta name="twitter:image" content="http://libaoquan.net/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/1.png">
 
 
 
@@ -326,7 +326,7 @@
                 
               
 
-              <time title="Post created: 2018-05-20 10:52:34 / Updated at: 10:53:24" itemprop="dateCreated datePublished" datetime="2018-05-20T10:52:34+08:00">2018-05-20</time>
+              <time title="Post created: 2018-05-20 11:17:14 / Updated at: 11:19:35" itemprop="dateCreated datePublished" datetime="2018-05-20T11:17:14+08:00">2018-05-20</time>
             
 
             
@@ -379,19 +379,19 @@
 <p>在文件末尾写入，注意 JAVA_HOME 是 JDK 的安装路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/usr/local/java/jdk1.8.0_171 </span><br><span class="line">export JRE_HOME=$&#123;JAVA_HOME&#125;/jre </span><br><span class="line">export CLASSPATH=.:$&#123;JAVA_HOME&#125;/lib:$&#123;JRE_HOME&#125;/lib </span><br><span class="line">export PATH=$&#123;JAVA_HOME&#125;/bin:$&#123;JRE_HOME&#125;/bin:$PATH</span><br></pre></td></tr></table></figure></p>
 <p>保存后退出，运行如下命令，使修改环境变量即可生效:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source /etc/profile</span><br></pre></td></tr></table></figure></p>
 <p>检测java是否成功安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ java -version</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515190420442-248379264.png" alt=""></p>
+<p><img src="/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/1.png" alt=""></p>
 <h2 id="Scala-安装"><a href="#Scala-安装" class="headerlink" title="Scala 安装"></a>Scala 安装</h2><p>下载 Scala 2.11.12 后，解压到自己指定目录。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mkdir /usr/local/scala</span><br><span class="line">$ sudo tar -zxvf scala-2.11.12.tgz -C /usr/local/scala</span><br></pre></td></tr></table></figure></p>
 <p>配置环境变量,打开 profile 文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo gedit /etc/profile</span><br></pre></td></tr></table></figure></p>
 <p>在文件末尾写入，注意 SCALA_HOME 是 Scala 的安装路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export SCALA_HOME=/usr/local/scala/scala-2.11.12 </span><br><span class="line">export PATH=$&#123;SCALA_HOME&#125;/bin:$PATH</span><br></pre></td></tr></table></figure></p>
 <p>保存后退出，运行如下命令，使修改环境变量即可生效:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source /etc/profile</span><br></pre></td></tr></table></figure></p>
 <p>检测java是否成功安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ scala  -version</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515190437746-1917133413.png" alt=""></p>
+<p><img src="/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/2.png" alt=""></p>
 <h2 id="Spark-安装"><a href="#Spark-安装" class="headerlink" title="Spark 安装"></a>Spark 安装</h2><p>下载 spark-2.2.1-bin-hadoop2.7.tgz 后，解压到自己指定目录。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mkdir /usr/local/spark</span><br><span class="line">$ sudo tar -zxvf spark-2.2.1-bin-hadoop2.7.tgz -C /usr/local/spark</span><br></pre></td></tr></table></figure></p>
 <p>配置环境变量,打开 profile 文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo gedit /etc/profile</span><br></pre></td></tr></table></figure></p>
 <p>在文件末尾写入，注意 SPARK_HOME 是 Spark 的安装路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export SPARK_HOME=/usr/local/spark/spark-2.2.1-bin-hadoop2.7</span><br><span class="line">export PATH=$&#123;SPARK_HOME&#125;/bin:$PATH</span><br></pre></td></tr></table></figure></p>
 <p>保存后退出，运行如下命令，使修改环境变量即可生效:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source /etc/profile</span><br></pre></td></tr></table></figure></p>
 <p>检测java是否成功安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ spark-shell</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://images2018.cnblogs.com/blog/901252/201805/901252-20180515190513466-649477134.png" alt=""></p>
+<p><img src="/2018/05/20/在-Ubuntu16-04-中搭建-Spark-单机开发环境-JDK-Scala-Spark/3.png" alt=""></p>
 
       
     </div>
