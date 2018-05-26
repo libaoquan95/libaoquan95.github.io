@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang=>
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+    <link rel="icon" href="">
+  
+    
+  <title>Spark 实践--用 Scala 和 Spark 进行数据分析 | libaoquan 的博客</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>libaoquan 的博客</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Spark 实践--用 Scala 和 Spark 进行数据分析</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2018/05/24</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spark实践/">Spark实践</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tags" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#Spark SQL" class='tag'>Spark SQL</a>
+
+  <a href="/tags/#Scala" class='tag'>Scala</a>
+
+
+            
+          </div>
+          <p>本文基于《Spark 高级数据分析》第2章 用-Scala-和-Spark-进行数据分析。<br>完整代码见 <a href="https://github.com/libaoquan95/aasPractice/tree/master/c2/Into" target="_blank" rel="noopener">https://github.com/libaoquan95/aasPractice/tree/master/c2/Into</a></p>
+<h2 id="1-获取数据集"><a href="#1-获取数据集" class="headerlink" title="1.获取数据集"></a>1.获取数据集</h2><blockquote>
+<p>数据集来自加州大学欧文分校机器学习资料库（UC Irvine Machine Learning Repository），这个资料库为研究和教学提供了大量非常好的数据源， 这些数据源非常有意义，并且是免费的。 我们要分析的数据集来源于一项记录关联研究，这项研究是德国一家医院在 2010 年完成的。这个数据集包含数百万对病人记录，每对记录都根据不同标准来匹配，比如病人姓名（名字和姓氏）、地址、生日。每个匹配字段都被赋予一个数值评分，范围为 0.0 到 1.0， 分值根据字符串相似度得出。然后这些数据交由人工处理，标记出哪些代表同一个人哪些代表不同的人。 为了保护病人隐私，创建数据集的每个字段原始值被删除了。病人的 ID、 字段匹配分数、匹配对标示（包括匹配的和不匹配的）等信息是公开的，可用于记录关联研究</p>
+</blockquote>
+<p>下载地址：</p>
+<ol>
+<li><a href="http://bit.ly/1Aoywaq" target="_blank" rel="noopener">http://bit.ly/1Aoywaq</a> （需翻墙）</li>
+<li><a href="https://github.com/libaoquan95/aasPractice/tree/master/c2/linkage" target="_blank" rel="noopener">https://github.com/libaoquan95/aasPractice/tree/master/c2/linkage</a>（已解压，block_1.csv 到 block_10.csv）</li>
+</ol>
+<h2 id="2-设置Spark运行环境，读取数据"><a href="#2-设置Spark运行环境，读取数据" class="headerlink" title="2.设置Spark运行环境，读取数据"></a>2.设置Spark运行环境，读取数据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">val sc = SparkSession.builder().appName(&quot;Into&quot;).master(&quot;local&quot;).getOrCreate()</span><br><span class="line">import sc.implicits._</span><br></pre></td></tr></table></figure>
+<p>读取数据集<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 数据地址</span><br><span class="line">val dataDir = &quot;inkage/block_*.csv&quot;</span><br><span class="line">// 读取有头部标题的CSV文件，并设置空值</span><br><span class="line">val parsed = sc.read .option(&quot;header&quot;, &quot;true&quot;) .option(&quot;nullValue&quot;, &quot;?&quot;) .option(&quot;inferSchema&quot;, &quot;true&quot;) .csv(dataDir)</span><br><span class="line">// 查看表</span><br><span class="line">parsed.show() </span><br><span class="line">// 查看表结构</span><br><span class="line">parsed.printSchema() </span><br><span class="line">parsed.cache()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/24/Spark-实践-用-Scala-和-Spark-进行数据分析/1.png" alt=""></p>
+<h2 id="3-处理数据"><a href="#3-处理数据" class="headerlink" title="3.处理数据"></a>3.处理数据</h2><p>首先按 is_match 字段聚合数据，有两种方式可以进行数据聚合，一是使用 groupby 函数，二是使用 Spark Sql<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// 聚合</span><br><span class="line">parsed.groupBy(&quot;is_match&quot;).count().orderBy($&quot;count&quot;.desc).show()</span><br><span class="line"></span><br><span class="line">// 先注册为临时表</span><br><span class="line">parsed.createOrReplaceTempView(&quot;linkage&quot;)</span><br><span class="line">// 使用sql查询，效果同上</span><br><span class="line">sc.sql(&quot;&quot;&quot;</span><br><span class="line">  SELECT is_match, COUNT(*) cnt</span><br><span class="line">  FROM linkage</span><br><span class="line">  GROUP BY is_match</span><br><span class="line">  ORDER BY cnt DESC</span><br><span class="line">&quot;&quot;&quot;).show()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/24/Spark-实践-用-Scala-和-Spark-进行数据分析/2.png" alt=""></p>
+<p>之后使用 describe 函数获取每个字段的最值，均值等信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 获取每一列的最值，平均值信息</span><br><span class="line">val summary = parsed.describe()</span><br><span class="line">summary.show()</span><br><span class="line">summary.select(&quot;summary&quot;, &quot;cmp_fname_c1&quot;, &quot;cmp_fname_c2&quot;).show()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/24/Spark-实践-用-Scala-和-Spark-进行数据分析/3.png" alt=""></p>
+<p>按此方式获取匹配记录和不匹配记录的 describe<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 获取匹配和不匹配的信息</span><br><span class="line">val matches = parsed.where(&quot;is_match = true&quot;)</span><br><span class="line">val misses = parsed.filter($&quot;is_match&quot; === false)</span><br><span class="line">val matchSummary = matches.describe()</span><br><span class="line">val missSummary = misses.describe()</span><br><span class="line">matchSummary .show()</span><br><span class="line">missSummary .show()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/24/Spark-实践-用-Scala-和-Spark-进行数据分析/4.png" alt=""><br>可以看到这个数据不方便进行操作，可以考虑将其转置，方便使用sql对数据进行分析<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">def longForm(desc: DataFrame): DataFrame = &#123;</span><br><span class="line">  import desc.sparkSession.implicits._ // For toDF RDD -&gt; DataFrame conversion</span><br><span class="line">  val schema = desc.schema</span><br><span class="line">  desc.flatMap(row =&gt; &#123;</span><br><span class="line">    val metric = row.getString(0)</span><br><span class="line">    (1 until row.size).map(i =&gt; (metric, schema(i).name, row.getString(i).toDouble))</span><br><span class="line">  &#125;)</span><br><span class="line">    .toDF(&quot;metric&quot;, &quot;field&quot;, &quot;value&quot;)</span><br><span class="line">&#125;</span><br><span class="line">def pivotSummary(desc: DataFrame): DataFrame = &#123;</span><br><span class="line">  val lf = longForm(desc)</span><br><span class="line">  lf.groupBy(&quot;field&quot;).</span><br><span class="line">    pivot(&quot;metric&quot;, Seq(&quot;count&quot;, &quot;mean&quot;, &quot;stddev&quot;, &quot;min&quot;, &quot;max&quot;)).</span><br><span class="line">    agg(first(&quot;value&quot;))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 转置，重塑数据</span><br><span class="line">val matchSummaryT = pivotSummary(matchSummary)</span><br><span class="line">val missSummaryT = pivotSummary(missSummary)</span><br><span class="line">matchSummaryT.createOrReplaceTempView(&quot;match_desc&quot;)</span><br><span class="line">missSummaryT.createOrReplaceTempView(&quot;miss_desc&quot;)</span><br><span class="line">sc.sql(&quot;&quot;&quot;</span><br><span class="line">  SELECT a.field, a.count + b.count total, a.mean - b.mean delta</span><br><span class="line">  FROM match_desc a INNER JOIN miss_desc b ON a.field = b.field</span><br><span class="line">  ORDER BY delta DESC, total DESC</span><br><span class="line">&quot;&quot;&quot;).show()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/24/Spark-实践-用-Scala-和-Spark-进行数据分析/5.png" alt=""><br><img src="/2018/05/24/Spark-实践-用-Scala-和-Spark-进行数据分析/6.png" alt=""></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-获取数据集"><span class="toc-number">1.</span> <span class="toc-text">1.获取数据集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-设置Spark运行环境，读取数据"><span class="toc-number">2.</span> <span class="toc-text">2.设置Spark运行环境，读取数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-处理数据"><span class="toc-number">3.</span> <span class="toc-text">3.处理数据</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2018 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>
