@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang=>
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+    <link rel="icon" href="">
+  
+    
+  <title>Spark 实践——音乐推荐和 Audioscrobbler 数据集 | libaoquan 的博客</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>libaoquan 的博客</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Spark 实践——音乐推荐和 Audioscrobbler 数据集</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2018/05/26</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spark实践/">Spark实践</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tags" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#Spark MLlib" class='tag'>Spark MLlib</a>
+
+  <a href="/tags/#Scala" class='tag'>Scala</a>
+
+
+            
+          </div>
+          <p>本文基于《Spark 高级数据分析》第3章 用音乐推荐和Audioscrobbler数据<br>完整代码见 <a href="https://github.com/libaoquan95/aasPractice/tree/master/c3/recommend" target="_blank" rel="noopener">https://github.com/libaoquan95/aasPractice/tree/master/c3/recommend</a></p>
+<h2 id="1-获取数据集"><a href="#1-获取数据集" class="headerlink" title="1.获取数据集"></a>1.获取数据集</h2><blockquote>
+<p>本 章 示 例 使 用 Audioscrobbler 公 开 发 布 的 一 个 数 据 集。 Audioscrobbler 是 last.fm 的 第一个音乐推荐系统。 last.fm 创建于 2002 年，是最早的互联网流媒体广播站点之一。</p>
+<p>Audioscrobbler 数据集有些特别， 因为它只记录了播放数据，主要的数据集在文件 user_artist_data.txt 中，它包含 141 000 个用户和 160 万个艺术家，记录了约 2420 万条用户播放艺术家歌曲的信息，其中包括播放次<br>数信息。</p>
+<p>数据集在 artist_data.txt 文件中给出了每个艺术家的 ID 和对应的名字。请注意，记录播放信息时，客户端应用提交的是艺术家的名字。名字如果有拼写错误，或使用了非标准的名称， 事后才能被发现。 比如，“The Smiths”“Smiths, The”和“the smiths”看似代表不同艺术家的 ID，但它们其实明显是指同一个艺术家。因此，为了将拼写错误的艺术家 ID 或ID 变体对应到该艺术家的规范 ID，数据集提供了 artist_alias.txt 文件。</p>
+</blockquote>
+<p>下载地址：</p>
+<ol>
+<li><a href="http://www-etud.iro.umontreal.ca/~bergstrj/audioscrobbler_data.html" target="_blank" rel="noopener">http://www-etud.iro.umontreal.ca/~bergstrj/audioscrobbler_data.html</a> （原书地址，已失效）</li>
+<li><a href="https://github.com/libaoquan95/aasPractice/tree/master/c3/profiledata_06-May-2005" target="_blank" rel="noopener">https://github.com/libaoquan95/aasPractice/tree/master/c3/profiledata_06-May-2005</a>（数据集大于git上传限制，分卷压缩）</li>
+</ol>
+<h2 id="2-数据处理"><a href="#2-数据处理" class="headerlink" title="2.数据处理"></a>2.数据处理</h2><p>加载数据集<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">val dataDirBase = &quot;profiledata_06-May-2005/&quot;</span><br><span class="line">val rawUserArtistData = sc.read.textFile(dataDirBase + &quot;user_artist_data.txt&quot;)</span><br><span class="line">val rawArtistData = sc.read.textFile(dataDirBase + &quot;artist_data.txt&quot;)</span><br><span class="line">val rawArtistAlias = sc.read.textFile(dataDirBase + &quot;artist_alias.txt&quot;)</span><br><span class="line"></span><br><span class="line">rawUserArtistData.show()</span><br><span class="line">rawArtistData.show()</span><br><span class="line">rawArtistAlias.show()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/26/Spark-实践-音乐推荐和Audioscrobbler数据集/1.png" alt=""><br><img src="/2018/05/26/Spark-实践-音乐推荐和Audioscrobbler数据集/2.png" alt=""><br><img src="/2018/05/26/Spark-实践-音乐推荐和Audioscrobbler数据集/3.png" alt=""></p>
+<p>格式化数据集，转换成 DataFrame<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">val artistByID = rawArtistData.flatMap &#123; line =&gt;</span><br><span class="line">  val (id, name) = line.span(_ != &apos;\t&apos;)</span><br><span class="line">  if (name.isEmpty())&#123;</span><br><span class="line">    None</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">      Some((id.toInt, name.trim))</span><br><span class="line">    &#125; catch&#123;</span><br><span class="line">      case _: NumberFormatException =&gt; None</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;.toDF(&quot;id&quot;, &quot;name&quot;).cache()</span><br><span class="line"></span><br><span class="line">val artistAlias = rawArtistAlias.flatMap &#123; line =&gt;</span><br><span class="line">  var Array(artist, alias) = line.split(&apos;\t&apos;)</span><br><span class="line">  if (artist.isEmpty()) &#123;</span><br><span class="line">    None</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    Some((artist.toInt, alias.toInt))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;.collect().toMap</span><br><span class="line">val bArtistAlias = sc.sparkContext.broadcast(artistAlias)</span><br><span class="line"></span><br><span class="line">val userArtistDF = rawUserArtistData.map &#123; line =&gt;</span><br><span class="line">  val Array(userId, artistID, count) = line.split(&apos; &apos;).map(_.toInt)</span><br><span class="line">  val finalArtistID = bArtistAlias.value.getOrElse(artistID, artistID)</span><br><span class="line">  (userId, artistID, count)</span><br><span class="line">&#125;.toDF(&quot;user&quot;, &quot;artist&quot;, &quot;count&quot;).cache()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/26/Spark-实践-音乐推荐和Audioscrobbler数据集/4.png" alt=""><br><img src="/2018/05/26/Spark-实践-音乐推荐和Audioscrobbler数据集/5.png" alt=""><br><img src="/2018/05/26/Spark-实践-音乐推荐和Audioscrobbler数据集/6.png" alt=""></p>
+<p>查看 artist 别名与实名<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">val (badID, goodID) = artistAlias.head</span><br><span class="line">artistByID.filter($&quot;id&quot; isin (badID, goodID)).show()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/26/Spark-实践-音乐推荐和Audioscrobbler数据集/7.png" alt=""></p>
+<h2 id="3-利用-Spark-MLlib-进行推荐"><a href="#3-利用-Spark-MLlib-进行推荐" class="headerlink" title="3.利用 Spark MLlib 进行推荐"></a>3.利用 Spark MLlib 进行推荐</h2><p>Spark MLlib 使用 ALS (交替最小二乘) 来实现协同过滤算法，该模型只需传入三元组 (用户ID, 物品ID, 评分) 就可以进行计算，需要注意，用户ID 和 物品ID必须是整型数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">val Array(trainData, cvData) = userArtistDF.randomSplit(Array(0.9, 0.1))</span><br><span class="line">val model = new ALS().</span><br><span class="line">    setSeed(Random.nextLong()).</span><br><span class="line">    setImplicitPrefs(true).</span><br><span class="line">    setRank(10).</span><br><span class="line">    setRegParam(0.01).</span><br><span class="line">    setAlpha(1.0).</span><br><span class="line">    setMaxIter(5).</span><br><span class="line">    setUserCol(&quot;user&quot;).</span><br><span class="line">    setItemCol(&quot;artist&quot;).</span><br><span class="line">    setRatingCol(&quot;count&quot;).</span><br><span class="line">    setPredictionCol(&quot;prediction&quot;).</span><br><span class="line">    fit(trainData)</span><br></pre></td></tr></table></figure>
+<p><img src="/2018/05/26/Spark-实践-音乐推荐和Audioscrobbler数据集/8.png" alt=""></p>
+<p>推荐模型已经搭建完成，不过 Spark MLlib 每次只能对单个用户进行推荐，无法进行单次的全局推荐。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">val userId = 2093760</span><br><span class="line">val topN = 10</span><br><span class="line"></span><br><span class="line">val toRecommend = model.itemFactors.</span><br><span class="line">  select($&quot;id&quot;.as(&quot;artist&quot;)).</span><br><span class="line">  withColumn(&quot;user&quot;, lit(userId))</span><br><span class="line"></span><br><span class="line">val topRecommendations  = model.transform(toRecommend).</span><br><span class="line">  select(&quot;artist&quot;, &quot;prediction&quot;).</span><br><span class="line">  orderBy($&quot;prediction&quot;.desc).</span><br><span class="line">  limit(topN)</span><br><span class="line"></span><br><span class="line">// 查看推荐结果</span><br><span class="line">val recommendedArtistIDs = topRecommendations.select(&quot;artist&quot;).as[Int].collect()</span><br><span class="line">artistByID.join(sc.createDataset(recommendedArtistIDs).</span><br><span class="line">  toDF(&quot;id&quot;), &quot;id&quot;).</span><br><span class="line">  select(&quot;name&quot;).show()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/26/Spark-实践-音乐推荐和Audioscrobbler数据集/9.png" alt=""></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-获取数据集"><span class="toc-number">1.</span> <span class="toc-text">1.获取数据集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-数据处理"><span class="toc-number">2.</span> <span class="toc-text">2.数据处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-利用-Spark-MLlib-进行推荐"><span class="toc-number">3.</span> <span class="toc-text">3.利用 Spark MLlib 进行推荐</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2018 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>
