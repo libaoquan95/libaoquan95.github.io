@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang=>
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+    <link rel="icon" href="">
+  
+    
+  <title>Spark 实践——用决策树算法预测森林植被 | libaoquan 的博客</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>libaoquan 的博客</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Spark 实践——用决策树算法预测森林植被</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2018/05/27</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spark实践/">Spark实践</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tags" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#Scala" class='tag'>Scala</a>
+
+  <a href="/tags/#Spark MLlib" class='tag'>Spark MLlib</a>
+
+
+            
+          </div>
+          <p>本文基于《Spark 高级数据分析》第3章 用音乐推荐和Audioscrobbler数据<br>完整代码见 <a href="https://github.com/libaoquan95/aasPractice/tree/master/c4/rdf" target="_blank" rel="noopener">https://github.com/libaoquan95/aasPractice/tree/master/c4/rdf</a></p>
+<h2 id="1-获取数据集"><a href="#1-获取数据集" class="headerlink" title="1.获取数据集"></a>1.获取数据集</h2><blockquote>
+<p>本 章 用 到 的 数 据 集 是 著 名 的 Covtype 数 据 集， 该 数 据 集 可 以 在 线 下 载（<a href="http://t.cn/R2wmIsI），包含一个" target="_blank" rel="noopener">http://t.cn/R2wmIsI），包含一个</a> CSV 格式的压缩数据文件 covtype.data.gz，附带一个描述数据文件的信息文件 covtype.info。</p>
+<p>该数据集记录了美国科罗拉多州不同地块的森林植被类型（也就是现实中的森林，这仅仅是巧合！）每个样本包含了描述每块土地的若干特征，包括海拔、坡度、到水源的距离、遮阳情况和土壤类型， 并且随同给出了地块的已知森林植被类型。我们需要总共 54 个特征中的其余各项来预测森林植被类型。</p>
+<p>人们已经用该数据集进行了研究，甚至在 Kaggle 大赛（<a href="https://www.kaggle.com/c/forestcover-type-prediction）" target="_blank" rel="noopener">https://www.kaggle.com/c/forestcover-type-prediction）</a> 中也用过它。本章之所以研究这个数据集， 原因在于它不但包含了数值型特征而且包含了类别型特征。 该数据集有 581 012 个样本，虽然还称不上大数据，但作为一个范例来已经足够大，而且也能够反映出大数据上的一些问题。</p>
+</blockquote>
+<p>下载地址：</p>
+<ol>
+<li><a href="http://t.cn/R2wmIsI" target="_blank" rel="noopener">http://t.cn/R2wmIsIl</a> （原书地址）</li>
+<li><a href="https://github.com/libaoquan95/aasPractice/tree/master/c4/covtype" target="_blank" rel="noopener">https://github.com/libaoquan95/aasPractice/tree/master/c4/covtype</a></li>
+</ol>
+<h2 id="2-数据处理"><a href="#2-数据处理" class="headerlink" title="2.数据处理"></a>2.数据处理</h2><p>加载数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">val dataDir = &quot;covtype.data&quot;</span><br><span class="line">val dataWithoutHeader = sc.read. option(&quot;inferSchema&quot;, true).option(&quot;header&quot;, false). csv(dataDir)</span><br><span class="line">dataWithoutHeader.printSchema</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/27/Spark-实践-用决策树算法预测森林植被/1.png" alt=""><br><img src="/2018/05/27/Spark-实践-用决策树算法预测森林植被/2.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// 结构化数据</span><br><span class="line">val colNames = Seq(</span><br><span class="line">    &quot;Elevation&quot;, &quot;Aspect&quot;, &quot;Slope&quot;,</span><br><span class="line">    &quot;Horizontal_Distance_To_Hydrology&quot;, &quot;Vertical_Distance_To_Hydrology&quot;,</span><br><span class="line">    &quot;Horizontal_Distance_To_Roadways&quot;,</span><br><span class="line">    &quot;Hillshade_9am&quot;, &quot;Hillshade_Noon&quot;, &quot;Hillshade_3pm&quot;,</span><br><span class="line">    &quot;Horizontal_Distance_To_Fire_Points&quot;</span><br><span class="line">) ++ (</span><br><span class="line">    (0 until 4).map(i =&gt; s&quot;Wilderness_Area_$i&quot;)</span><br><span class="line">    ) ++ (</span><br><span class="line">    (0 until 40).map(i =&gt; s&quot;Soil_Type_$i&quot;)</span><br><span class="line">    ) ++ Seq(&quot;Cover_Type&quot;)</span><br><span class="line"></span><br><span class="line">val data = dataWithoutHeader.toDF(colNames:_*).</span><br><span class="line">    withColumn(&quot;Cover_Type&quot;, $&quot;Cover_Type&quot;.cast(&quot;double&quot;))</span><br><span class="line"></span><br><span class="line">val Array(trainData, testData) = data.randomSplit(Array(0.9, 0.1))</span><br><span class="line">trainData.cache()</span><br><span class="line">testData.cache()</span><br><span class="line"></span><br><span class="line">data.printSchema</span><br></pre></td></tr></table></figure>
+<p><img src="/2018/05/27/Spark-实践-用决策树算法预测森林植被/3.png" alt=""></p>
+<h2 id="3-构造决策树"><a href="#3-构造决策树" class="headerlink" title="3.构造决策树"></a>3.构造决策树</h2><p>构造特征向量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">val inputCols = trainData.columns.filter(_ != &quot;Cover_Type&quot;)</span><br><span class="line">val assembler = new VectorAssembler().setInputCols(inputCols).setOutputCol(&quot;featureVector&quot;)</span><br><span class="line">val assembledTrainData = assembler.transform(trainData)</span><br><span class="line"></span><br><span class="line">val classifier = new DecisionTreeClassifier().</span><br><span class="line">    setSeed(Random.nextLong()).</span><br><span class="line">    setLabelCol(&quot;Cover_Type&quot;).</span><br><span class="line">    setFeaturesCol(&quot;featureVector&quot;).</span><br><span class="line">    setPredictionCol(&quot;prediction&quot;)</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/27/Spark-实践-用决策树算法预测森林植被/4.png" alt=""><br><img src="/2018/05/27/Spark-实践-用决策树算法预测森林植被/5.png" alt=""></p>
+<p>训练模型<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">val model = classifier.fit(assembledTrainData)</span><br><span class="line">println(model.toDebugString)</span><br><span class="line"></span><br><span class="line">model.featureImportances.toArray.zip(inputCols).sorted.reverse.foreach(println)</span><br><span class="line">val predictions = model.transform(assembledTrainData)</span><br><span class="line">predictions.select(&quot;Cover_Type&quot;, &quot;prediction&quot;, &quot;probability&quot;).  show(truncate = false)</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/27/Spark-实践-用决策树算法预测森林植被/6.png" alt=""><br><img src="/2018/05/27/Spark-实践-用决策树算法预测森林植被/7.png" alt=""><br><img src="/2018/05/27/Spark-实践-用决策树算法预测森林植被/8.png" alt=""></p>
+<p>评估模型<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">val evaluator = new MulticlassClassificationEvaluator(). setLabelCol(&quot;Cover_Type&quot;). setPredictionCol(&quot;prediction&quot;)</span><br><span class="line">val accuracy = evaluator.setMetricName(&quot;accuracy&quot;).evaluate(predictions)</span><br><span class="line">val f1 = evaluator.setMetricName(&quot;f1&quot;).evaluate(predictions)</span><br><span class="line">println(accuracy)</span><br><span class="line">println(f1)</span><br><span class="line"></span><br><span class="line">val predictionRDD = predictions.</span><br><span class="line">    select(&quot;prediction&quot;, &quot;Cover_Type&quot;).</span><br><span class="line">    as[(Double,Double)].rdd</span><br><span class="line">val multiclassMetrics = new MulticlassMetrics(predictionRDD)</span><br><span class="line">println(multiclassMetrics.confusionMatrix)</span><br><span class="line"></span><br><span class="line">val confusionMatrix = predictions.</span><br><span class="line">    groupBy(&quot;Cover_Type&quot;).</span><br><span class="line">    pivot(&quot;prediction&quot;, (1 to 7)).</span><br><span class="line">    count().</span><br><span class="line">    na.fill(0.0).</span><br><span class="line">    orderBy(&quot;Cover_Type&quot;)</span><br><span class="line"></span><br><span class="line">confusionMatrix.show()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/05/27/Spark-实践-用决策树算法预测森林植被/9.png" alt=""><br><img src="/2018/05/27/Spark-实践-用决策树算法预测森林植被/10.png" alt=""></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-获取数据集"><span class="toc-number">1.</span> <span class="toc-text">1.获取数据集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-数据处理"><span class="toc-number">2.</span> <span class="toc-text">2.数据处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-构造决策树"><span class="toc-number">3.</span> <span class="toc-text">3.构造决策树</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2018 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>
