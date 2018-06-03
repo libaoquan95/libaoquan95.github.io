@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang=>
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+    <link rel="icon" href="">
+  
+    
+  <title>Spark 实践——基于 Spark MLlib 和 YFCC 100M 数据集的景点推荐系统 | libaoquan 的博客</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>libaoquan 的博客</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Spark 实践——基于 Spark MLlib 和 YFCC 100M 数据集的景点推荐系统</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2018/06/03</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spark实践/">Spark实践</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tags" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#Spark MLlib" class='tag'>Spark MLlib</a>
+
+  <a href="/tags/#Scala" class='tag'>Scala</a>
+
+  <a href="/tags/#YFCC 100M" class='tag'>YFCC 100M</a>
+
+
+            
+          </div>
+          <h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1.前言"></a>1.前言</h2><p>上接 <a href="http://www.cnblogs.com/libaoquan/p/7856789.html" target="_blank" rel="noopener">YFCC 100M数据集分析笔记</a> 和 <a href="http://www.cnblogs.com/libaoquan/p/8047413.html" target="_blank" rel="noopener">使用百度地图api可视化聚类结果</a>, 在对 YFCC 100M 聚类出的景点信息的基础上，使用  Spark MLlib 提供的 ALS 算法构建推荐模型。</p>
+<p>本节代码可见：<a href="https://github.com/libaoquan95/TRS/tree/master/Analyse/recommend" target="_blank" rel="noopener">https://github.com/libaoquan95/TRS/tree/master/Analyse/recommend</a></p>
+<p>数据信息：<a href="https://github.com/libaoquan95/TRS/tree/master/Analyse/dataset" target="_blank" rel="noopener">https://github.com/libaoquan95/TRS/tree/master/Analyse/dataset</a></p>
+<h2 id="2-数据预处理"><a href="#2-数据预处理" class="headerlink" title="2.数据预处理"></a>2.数据预处理</h2><p>在用户数据(<a href="https://github.com/libaoquan95/TRS/tree/master/Analyse/dataset" target="_blank" rel="noopener">user.csv</a>) 和 用户-景点数据(<a href="https://raw.githubusercontent.com/libaoquan95/TRS/master/Analyse/dataset/user-attraction.csv" target="_blank" rel="noopener">user-attraction.csv</a>) 中，用户标识和景点标识都使用了字符串进行表示，但在 Spark MLlib 提供的 ALS 算法中，要求这两者是整数类型，所以首先要对数据进行预处理，将其转化为整数。</p>
+<p>对于 userName, 联立 user.csv 和 user-attraction.csv，将  user-attraction.csv 中的 userName 转化为 userId 即可。</p>
+<p>对于 provinceId, 可以考虑将其编码，provinceId 格式为 省份标识_省内景点编号，如 HK_100 标识使用在香港拍摄的照片聚类出的第 100 个景点。</p>
+<p>编码方式很简单，首先将 _ 前的省份标识转化为数字，之后与 _ 后的数字连接即可。<br>编码与解码代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line">val provinceToCode = Map(</span><br><span class="line">  &quot;LN&quot; -&gt; &quot;10&quot;,</span><br><span class="line">  &quot;ShanX&quot; -&gt; &quot;11&quot;,</span><br><span class="line">  &quot;ZJ&quot; -&gt; &quot;12&quot;,</span><br><span class="line">  &quot;CQ&quot; -&gt; &quot;13&quot;,</span><br><span class="line">  &quot;HLJ&quot; -&gt; &quot;14&quot;,</span><br><span class="line">  &quot;AH&quot; -&gt; &quot;15&quot;,</span><br><span class="line">  &quot;SanX&quot; -&gt; &quot;16&quot;,</span><br><span class="line">  &quot;SD&quot; -&gt; &quot;17&quot;,</span><br><span class="line">  &quot;SH&quot; -&gt; &quot;18&quot;,</span><br><span class="line">  &quot;XJ&quot; -&gt; &quot;19&quot;,</span><br><span class="line">  &quot;HuN&quot; -&gt; &quot;20&quot;,</span><br><span class="line">  &quot;GS&quot; -&gt; &quot;21&quot;,</span><br><span class="line">  &quot;HeN&quot; -&gt; &quot;22&quot;,</span><br><span class="line">  &quot;BJ&quot; -&gt; &quot;23&quot;,</span><br><span class="line">  &quot;NMG&quot; -&gt; &quot;24&quot;,</span><br><span class="line">  &quot;YN&quot; -&gt; &quot;25&quot;,</span><br><span class="line">  &quot;JX&quot; -&gt; &quot;26&quot;,</span><br><span class="line">  &quot;HuB&quot; -&gt; &quot;27&quot;,</span><br><span class="line">  &quot;JL&quot; -&gt; &quot;28&quot;,</span><br><span class="line">  &quot;NX&quot; -&gt; &quot;29&quot;,</span><br><span class="line">  &quot;TJ&quot; -&gt; &quot;30&quot;,</span><br><span class="line">  &quot;FJ&quot; -&gt; &quot;31&quot;,</span><br><span class="line">  &quot;SC&quot; -&gt; &quot;32&quot;,</span><br><span class="line">  &quot;TW&quot; -&gt; &quot;33&quot;,</span><br><span class="line">  &quot;GX&quot; -&gt; &quot;34&quot;,</span><br><span class="line">  &quot;GD&quot; -&gt; &quot;35&quot;,</span><br><span class="line">  &quot;HeB&quot; -&gt; &quot;36&quot;,</span><br><span class="line">  &quot;HaiN&quot; -&gt; &quot;37&quot;,</span><br><span class="line">  &quot;Macro&quot; -&gt; &quot;38&quot;,</span><br><span class="line">  &quot;XZ&quot; -&gt; &quot;39&quot;,</span><br><span class="line">  &quot;GZ&quot; -&gt; &quot;40&quot;,</span><br><span class="line">  &quot;JS&quot; -&gt; &quot;41&quot;,</span><br><span class="line">  &quot;QH&quot; -&gt; &quot;42&quot;,</span><br><span class="line">  &quot;HK&quot; -&gt; &quot;43&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">val codeToProvince = Map(</span><br><span class="line">  &quot;10&quot; -&gt; &quot;LN&quot;,</span><br><span class="line">  &quot;11&quot; -&gt; &quot;ShanX&quot;,</span><br><span class="line">  &quot;12&quot; -&gt; &quot;ZJ&quot;,</span><br><span class="line">  &quot;13&quot; -&gt; &quot;CQ&quot;,</span><br><span class="line">  &quot;14&quot; -&gt; &quot;HLJ&quot;,</span><br><span class="line">  &quot;15&quot; -&gt; &quot;AH&quot;,</span><br><span class="line">  &quot;16&quot; -&gt; &quot;SanX&quot;,</span><br><span class="line">  &quot;17&quot; -&gt; &quot;SD&quot;,</span><br><span class="line">  &quot;18&quot; -&gt; &quot;SH&quot;,</span><br><span class="line">  &quot;19&quot; -&gt; &quot;XJ&quot;,</span><br><span class="line">  &quot;20&quot; -&gt; &quot;HuN&quot;,</span><br><span class="line">  &quot;21&quot; -&gt; &quot;GS&quot;,</span><br><span class="line">  &quot;22&quot; -&gt; &quot;HeN&quot;,</span><br><span class="line">  &quot;23&quot; -&gt; &quot;BJ&quot;,</span><br><span class="line">  &quot;24&quot; -&gt; &quot;NMG&quot;,</span><br><span class="line">  &quot;25&quot; -&gt; &quot;YN&quot;,</span><br><span class="line">  &quot;26&quot; -&gt; &quot;JX&quot;,</span><br><span class="line">  &quot;27&quot; -&gt; &quot;HuB&quot;,</span><br><span class="line">  &quot;28&quot; -&gt; &quot;JL&quot;,</span><br><span class="line">  &quot;29&quot; -&gt; &quot;NX&quot;,</span><br><span class="line">  &quot;30&quot; -&gt; &quot;TJ&quot;,</span><br><span class="line">  &quot;31&quot; -&gt; &quot;FJ&quot;,</span><br><span class="line">  &quot;32&quot; -&gt; &quot;SC&quot;,</span><br><span class="line">  &quot;33&quot; -&gt; &quot;TW&quot;,</span><br><span class="line">  &quot;34&quot; -&gt; &quot;GX&quot;,</span><br><span class="line">  &quot;35&quot; -&gt; &quot;GD&quot;,</span><br><span class="line">  &quot;36&quot; -&gt; &quot;HeB&quot;,</span><br><span class="line">  &quot;37&quot; -&gt; &quot;HaiN&quot;,</span><br><span class="line">  &quot;38&quot; -&gt; &quot;Macro&quot;,</span><br><span class="line">  &quot;39&quot; -&gt; &quot;XZ&quot;,</span><br><span class="line">  &quot;40&quot; -&gt; &quot;GZ&quot;,</span><br><span class="line">  &quot;41&quot; -&gt; &quot;JS&quot;,</span><br><span class="line">  &quot;42&quot; -&gt; &quot;QH&quot;,</span><br><span class="line">  &quot;43&quot; -&gt; &quot;HK&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">// 编码</span><br><span class="line">def codeing(str: String): String = &#123;</span><br><span class="line">  var code: String = &quot;&quot;</span><br><span class="line">  val Array(province, index) = str.split(&apos;_&apos;)</span><br><span class="line">  code = provinceToCode(province) + index</span><br><span class="line">  code</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 解码</span><br><span class="line">def decodeing(str: String): String = &#123;</span><br><span class="line">  var decode: String = &quot;&quot;</span><br><span class="line">  decode = codeToProvince(str(0).toString+str(1).toString) + &quot;_&quot;</span><br><span class="line">  for (i &lt;- 1 to str.length-1)&#123;</span><br><span class="line">    decode += str(i).toString</span><br><span class="line">  &#125;</span><br><span class="line">  decode</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/2018/06/03/Spark-实践-基于-Spark-MLlib-和-YFCC-100M-数据集的景点推荐系统/1.png" alt=""></p>
+<p>之后加载用户数据 user.scv，并去除头标题。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">val dataDirBase = &quot;..\\dataset\\&quot;</span><br><span class="line">val userIdToName = sc.read.</span><br><span class="line">  textFile(dataDirBase + &quot;user.csv&quot;).</span><br><span class="line">  flatMap&#123; line =&gt;</span><br><span class="line">    var Array(userId, userName) = line.split(&apos;,&apos;)</span><br><span class="line">    if(userId == &quot;userId&quot;)&#123;</span><br><span class="line">      None</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      Some((userId, userName))</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;.collect().toMap</span><br><span class="line"></span><br><span class="line">val userNameToId = sc.read.</span><br><span class="line">  textFile(dataDirBase + &quot;user.csv&quot;).</span><br><span class="line">  flatMap&#123; line =&gt;</span><br><span class="line">    var Array(userId, userName) = line.split(&apos;,&apos;)</span><br><span class="line">    if(userId == &quot;userId&quot;)&#123;</span><br><span class="line">      None</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      Some((userName, userId))</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;.collect().toMap</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/06/03/Spark-实践-基于-Spark-MLlib-和-YFCC-100M-数据集的景点推荐系统/2.png" alt=""></p>
+<p>转化 user-attraction 数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">val userAttractionDF = sc.read.</span><br><span class="line">  textFile(dataDirBase + &quot;user-attraction.csv&quot;).</span><br><span class="line">  flatMap&#123; line =&gt;</span><br><span class="line">    val Array(userName, attractionId, count, rating) = line.split(&apos;,&apos;)</span><br><span class="line">    if (userName == &quot;userName&quot;)&#123;</span><br><span class="line">      None</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      Some((userNameToId(userName).toInt, codeing(attractionId).toInt, count.toInt))</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;.toDF(&quot;user&quot;, &quot;attraction&quot;, &quot;count&quot;).cache()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/06/03/Spark-实践-基于-Spark-MLlib-和-YFCC-100M-数据集的景点推荐系统/3.png" alt=""></p>
+<h2 id="3-建立推荐模型"><a href="#3-建立推荐模型" class="headerlink" title="3.建立推荐模型"></a>3.建立推荐模型</h2><p>Spark MLlib ALS 算法接受 三元组矩阵数据，分别代表 用户标识，景点标识，评分数据，其中 用户标识，景点标识 必须是整数。</p>
+<p>ALS 是 最小交替二乘 的简称，是使用矩阵分解算法来填补稀疏矩阵，预测评分，具体参见<a href="http://www.cnblogs.com/libaoquan/p/8476157.html" target="_blank" rel="noopener">矩阵分解在协同过滤推荐算法中的应用</a></p>
+<p>经历过上面的步骤后，userAttractionDF 已经转化为适应 ALS 算法的数据。之后可以建立推荐模型了，将数据拆分为训练集和测试集，使用训练集训练模型。具体算法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">val Array(trainData, cvData) = userAttractionDF.randomSplit(Array(0.9, 0.1))</span><br><span class="line">val model = new ALS().</span><br><span class="line">  setSeed(Random.nextLong()).</span><br><span class="line">  setImplicitPrefs(true).</span><br><span class="line">  setRank(10).</span><br><span class="line">  setRegParam(0.01).</span><br><span class="line">  setAlpha(1.0).</span><br><span class="line">  setMaxIter(5).</span><br><span class="line">  setUserCol(&quot;user&quot;).</span><br><span class="line">  setItemCol(&quot;attraction&quot;).</span><br><span class="line">  setRatingCol(&quot;count&quot;).</span><br><span class="line">  setPredictionCol(&quot;prediction&quot;).</span><br><span class="line">  fit(trainData)</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/06/03/Spark-实践-基于-Spark-MLlib-和-YFCC-100M-数据集的景点推荐系统/4.png" alt=""></p>
+<h2 id="4-进行推荐"><a href="#4-进行推荐" class="headerlink" title="4.进行推荐"></a>4.进行推荐</h2><p>Spark MLlib ALS 一次只能对一个用户进行推荐，代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">def recommendByUser(userId: Int, topN: Int): Array[String] = &#123;</span><br><span class="line">  val toRecommend = model.itemFactors.</span><br><span class="line">    select($&quot;id&quot;.as(&quot;attraction&quot;)).</span><br><span class="line">    withColumn(&quot;user&quot;, lit(userId))</span><br><span class="line"></span><br><span class="line">  val topRecommendations  = model.transform(toRecommend).</span><br><span class="line">    select(&quot;attraction&quot;, &quot;prediction&quot;).</span><br><span class="line">    orderBy($&quot;prediction&quot;.desc).</span><br><span class="line">    limit(topN)</span><br><span class="line"></span><br><span class="line">  val recommends = topRecommendations.select(&quot;attraction&quot;).as[Int].collect()</span><br><span class="line">  recommends.map(line =&gt; decodeing(line.toString))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>推荐效果如下：<br><img src="/2018/06/03/Spark-实践-基于-Spark-MLlib-和-YFCC-100M-数据集的景点推荐系统/5.png" alt=""></p>
+<h2 id="5-评测系统"><a href="#5-评测系统" class="headerlink" title="5.评测系统"></a>5.评测系统</h2><p>验证推荐模型的正确率<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">def testRecommend(): Double =&#123;</span><br><span class="line">  val topN = 10</span><br><span class="line">  val users = cvData.select($&quot;user&quot;).distinct().collect().map(u =&gt; u(0))</span><br><span class="line">  var hit = 0.0</span><br><span class="line">  var rec_count = 0.0</span><br><span class="line"></span><br><span class="line">  for (i &lt;- 0 to users.length-1) &#123;</span><br><span class="line">    val recs = recommendByUser(users(i).toString.toInt, topN).toSet</span><br><span class="line">    val temp = trainData.select($&quot;attraction&quot;).</span><br><span class="line">      where($&quot;user&quot; === users(i).toString.toInt).</span><br><span class="line">      collect().map(a =&gt; decodeing(a(0).toString)).</span><br><span class="line">      toSet</span><br><span class="line">    hit += recs.&amp;(temp).size</span><br><span class="line">    rec_count += recs.size</span><br><span class="line">  &#125;</span><br><span class="line">  hit / rec_count</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/06/03/Spark-实践-基于-Spark-MLlib-和-YFCC-100M-数据集的景点推荐系统/6.png" alt=""></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-前言"><span class="toc-number">1.</span> <span class="toc-text">1.前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-数据预处理"><span class="toc-number">2.</span> <span class="toc-text">2.数据预处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-建立推荐模型"><span class="toc-number">3.</span> <span class="toc-text">3.建立推荐模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-进行推荐"><span class="toc-number">4.</span> <span class="toc-text">4.进行推荐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-评测系统"><span class="toc-number">5.</span> <span class="toc-text">5.评测系统</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2018 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>
