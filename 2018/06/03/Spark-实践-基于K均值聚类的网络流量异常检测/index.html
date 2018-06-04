@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang=>
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+    <link rel="icon" href="">
+  
+    
+  <title>Spark 实践——基于K均值聚类的网络流量异常检测 | libaoquan 的博客</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class='logo' href="/">
+      <span>libaoquan 的博客</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id='post'>
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Spark 实践——基于K均值聚类的网络流量异常检测</h1>
+          <div class='post-meta'>
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2018/06/03</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spark实践/">Spark实践</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tags" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#Spark MLlib" class='tag'>Spark MLlib</a>
+
+  <a href="/tags/#Scala" class='tag'>Scala</a>
+
+
+            
+          </div>
+          <h2 id="1-获取数据集"><a href="#1-获取数据集" class="headerlink" title="1.获取数据集"></a>1.获取数据集</h2><blockquote>
+<p><a href="http://www.sigkdd.org/kddcup/index.php" target="_blank" rel="noopener">KDD Cup</a> 是一项数据挖掘竞赛，每年由 ACM 特别兴趣小组举办。 KDD Cup 每年都给出一个机器学习问题和相关数据集，研究人员应邀提交论文，论文将详细说明研究人员各自就该机器学习问题给出的最佳方案。1999年 <a href="http://www.sigkdd.org/kdd-cup-1999-computer-network-intrusion-detection" target="_blank" rel="noopener">(http://www.sigkdd.org/kdd-cup-1999-computer-network-intrusion-detection)</a> KDD Cup 竞赛的主题是网络入侵。</p>
+</blockquote>
+<p>下载地址：</p>
+<ol>
+<li><a href="http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html" target="_blank" rel="noopener">http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html</a> （原书地址）</li>
+<li><a href="https://github.com/libaoquan95/aasPractice/tree/master/c5/kddcup_1999" target="_blank" rel="noopener">https://github.com/libaoquan95/aasPractice/tree/master/c5/kddcup_1999</a></li>
+</ol>
+<h2 id="2-数据处理"><a href="#2-数据处理" class="headerlink" title="2.数据处理"></a>2.数据处理</h2><p>加载数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">val dataDir = &quot;..\\kddcup_1999\\&quot;</span><br><span class="line"></span><br><span class="line">val data = sc.read.</span><br><span class="line">  option(&quot;inferSchema&quot;, true).</span><br><span class="line">  option(&quot;header&quot;, false).</span><br><span class="line">  csv(dataDir+&quot;kddcup.data.corrected&quot;).</span><br><span class="line">  toDF(</span><br><span class="line">    &quot;duration&quot;, &quot;protocol_type&quot;, &quot;service&quot;, &quot;flag&quot;,</span><br><span class="line">    &quot;src_bytes&quot;, &quot;dst_bytes&quot;, &quot;land&quot;, &quot;wrong_fragment&quot;, &quot;urgent&quot;,</span><br><span class="line">    &quot;hot&quot;, &quot;num_failed_logins&quot;, &quot;logged_in&quot;, &quot;num_compromised&quot;,</span><br><span class="line">    &quot;root_shell&quot;, &quot;su_attempted&quot;, &quot;num_root&quot;, &quot;num_file_creations&quot;,</span><br><span class="line">    &quot;num_shells&quot;, &quot;num_access_files&quot;, &quot;num_outbound_cmds&quot;,</span><br><span class="line">    &quot;is_host_login&quot;, &quot;is_guest_login&quot;, &quot;count&quot;, &quot;srv_count&quot;,</span><br><span class="line">    &quot;serror_rate&quot;, &quot;srv_serror_rate&quot;, &quot;rerror_rate&quot;, &quot;srv_rerror_rate&quot;,</span><br><span class="line">    &quot;same_srv_rate&quot;, &quot;diff_srv_rate&quot;, &quot;srv_diff_host_rate&quot;,</span><br><span class="line">    &quot;dst_host_count&quot;, &quot;dst_host_srv_count&quot;,</span><br><span class="line">    &quot;dst_host_same_srv_rate&quot;, &quot;dst_host_diff_srv_rate&quot;,</span><br><span class="line">    &quot;dst_host_same_src_port_rate&quot;, &quot;dst_host_srv_diff_host_rate&quot;,</span><br><span class="line">    &quot;dst_host_serror_rate&quot;, &quot;dst_host_srv_serror_rate&quot;,</span><br><span class="line">    &quot;dst_host_rerror_rate&quot;, &quot;dst_host_srv_rerror_rate&quot;,</span><br><span class="line">    &quot;label&quot;)</span><br><span class="line"></span><br><span class="line">data.cache()</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/06/03/Spark-实践-基于K均值聚类的网络流量异常检测/1.png" alt=""></p>
+<p>查看每个类的数量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data.select(&quot;label&quot;).groupBy(&quot;label&quot;).count().orderBy($&quot;count&quot;.desc).show(25)</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/06/03/Spark-实践-基于K均值聚类的网络流量异常检测/2.png" alt=""></p>
+<h2 id="3-构造K-means模型"><a href="#3-构造K-means模型" class="headerlink" title="3.构造K-means模型"></a>3.构造K-means模型</h2><p>构造特征向量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">def clusteringTake(data: DataFrame, k: Int): Unit = &#123;</span><br><span class="line">    val numericOnly = data.drop(&quot;protocol_type&quot;, &quot;service&quot;, &quot;flag&quot;).cache()</span><br><span class="line">    val assembler = new VectorAssembler().</span><br><span class="line">      setInputCols(numericOnly.columns.filter(_ != &quot;label&quot;)).</span><br><span class="line">      setOutputCol(&quot;featureVector&quot;)</span><br><span class="line"></span><br><span class="line">    val kmeans = new KMeans().</span><br><span class="line">      setSeed(Random.nextLong()).</span><br><span class="line">      setK(k).</span><br><span class="line">      setPredictionCol(&quot;cluster&quot;).</span><br><span class="line">      setFeaturesCol(&quot;featureVector&quot;)</span><br><span class="line"></span><br><span class="line">    val pipeline = new Pipeline().setStages(Array(assembler, kmeans))</span><br><span class="line">    val pipelineModel = pipeline.fit(numericOnly)</span><br><span class="line">    val kmeansModel = pipelineModel.stages.last.asInstanceOf[KMeansModel]</span><br><span class="line"></span><br><span class="line">    val withCluster = pipelineModel.transform(numericOnly)</span><br><span class="line"></span><br><span class="line">    withCluster.select(&quot;cluster&quot;, &quot;label&quot;).</span><br><span class="line">      groupBy(&quot;cluster&quot;, &quot;label&quot;).count().</span><br><span class="line">      orderBy($&quot;cluster&quot;, $&quot;count&quot;.desc).</span><br><span class="line">      show(25)</span><br><span class="line"></span><br><span class="line">    numericOnly.unpersist()</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>聚类数量为 2 时<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clusteringTake(data, 2)</span><br></pre></td></tr></table></figure></p>
+<p><img src="/2018/06/03/Spark-实践-基于K均值聚类的网络流量异常检测/4.png" alt=""></p>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-获取数据集"><span class="toc-number">1.</span> <span class="toc-text">1.获取数据集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-数据处理"><span class="toc-number">2.</span> <span class="toc-text">2.数据处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-构造K-means模型"><span class="toc-number">3.</span> <span class="toc-text">3.构造K-means模型</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2018 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>
